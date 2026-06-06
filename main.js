@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { configDotenv } from 'dotenv';
 
-configDotenv(); // загружает .env в process.env
+configDotenv();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,14 +30,24 @@ const server = createServer(async (req, res) => {
             break;
 
         case "/search":
-            // Читаем параметры из query string: /search?query=inception&genre=Drama
             const query = url.searchParams.get("query") ?? "";
             const genre = url.searchParams.get("genre") ?? "Drama";
+            const originalTitle = url.searchParams.get("originalTitle") ?? "";
 
             try {
-                const results = await search(query, genre);
+                const results = await search(query, genre, originalTitle);
                 res.writeHead(200, { "content-type": "application/json" });
                 res.end(JSON.stringify(results));
+            } catch (err) {
+                res.writeHead(500, { "content-type": "application/json" });
+                res.end(JSON.stringify({ error: err.message }));
+            }
+            break;
+        case "/availableGenres":
+            try {
+                const genres = await getGenres();
+                res.writeHead(200, { "content-type": "application/json" });
+                res.end(JSON.stringify(genres));
             } catch (err) {
                 res.writeHead(500, { "content-type": "application/json" });
                 res.end(JSON.stringify({ error: err.message }));
@@ -50,14 +60,15 @@ const server = createServer(async (req, res) => {
     }
 });
 
-async function search(query, genre = "Drama") {
+async function search(query, genre = "Drama", originalTitle = "") {
     const params = new URLSearchParams({
         type: "movie",
         genre,
         rows: 25,
         sortOrder: "ASC",
         sortField: "id",
-        ...(query && { query }), // добавляем query только если передан
+        ...(query && { query }),
+        ...(originalTitle && { originalTitle }),
     });
 
     const response = await fetch(
@@ -66,7 +77,27 @@ async function search(query, genre = "Drama") {
             method: "GET",
             headers: {
                 "x-rapidapi-host": "imdb236.p.rapidapi.com",
-                "x-rapidapi-key": process.env.RAPIDAPI_KEY, // из .env
+                "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+            },
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+    }
+
+    return response.json();
+}
+
+async function getGenres() {
+    const response = await fetch(
+        "https://imdb236.p.rapidapi.com/api/imdb/genres",
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "x-rapidapi-host": "imdb236.p.rapidapi.com",
+                "x-rapidapi-key": process.env.RAPIDAPI_KEY,
             },
         }
     );
