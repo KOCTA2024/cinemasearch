@@ -34,7 +34,7 @@ const server = createServer(async (req, res) => {
             res.end(resolvePathToFile("script.js"));
             break;
 
-        case "/search":
+        case "/api/search":
             const primaryTitle = url.searchParams.get("primaryTitle") ?? "";
             const genre = url.searchParams.get("genre") ?? "";
             const originalTitle = url.searchParams.get("originalTitle") ?? "";
@@ -75,6 +75,7 @@ const server = createServer(async (req, res) => {
                 res.end(JSON.stringify({ error: err.message }));
             }
             break;
+        
 
         default:
             res.writeHead(404);

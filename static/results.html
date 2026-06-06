@@ -13,7 +13,7 @@
         let ul = document.querySelector("ul")
         let title = new URLSearchParams(window.location.search).get("title");
     console.log(title);
-    fetch("/search?title=" + title).then(res=>res.json()).then(data=>{
+    fetch("/api/search?title=" + title).then(res=>res.json()).then(data=>{
         console.log(data)
         data.results.forEach(m=>{
             document.querySelector("#main").innerHTML += `<div class="film_div">${m.primaryTitle}</div>`
