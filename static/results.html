@@ -24,7 +24,7 @@ data.titles.forEach(m => {
                 <div class="film_div">
                     <h2>${m.primaryTitle}</h2>
                     <h4>${detail.plot ?? ''}</h4>
-                    <img src="${m.primaryImage?.url ?? ''}">
+                    <img src="${m.primaryImage?.url ?? ''} " weight=300 height=600>
                 </div>
             `;
         });
