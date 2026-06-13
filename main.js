@@ -13,11 +13,12 @@ const __dirname = dirname(__filename);
 const server = createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
-    if (req.url.startsWith("/search")){
-        res.writeHead(200, {"content-type": "text/html"})
+    if (req.url.startsWith("/search")) {
+        res.writeHead(200, { "content-type": "text/html" });
         res.end(resolvePathToFile("results.html"));
-        return
+        return;
     }
+
     switch (url.pathname) {
         case "/":
             res.writeHead(200, { "content-type": "text/html" });
@@ -34,18 +35,19 @@ const server = createServer(async (req, res) => {
             res.end(resolvePathToFile("script.js"));
             break;
 
-        case "/api/search":
+        case "/api/search": {
             const primaryTitle = url.searchParams.get("primaryTitle") ?? "";
             const genre = url.searchParams.get("genre") ?? "";
             const originalTitle = url.searchParams.get("originalTitle") ?? "";
 
             if (!primaryTitle && !genre && !originalTitle) {
                 res.writeHead(400, { "content-type": "application/json" });
-                res.end(JSON.stringify({ error: "Укажите хотя бы один параметр: primaryTitle, genre или originalTitle" }));
+                res.end(JSON.stringify({ error: "Укажите хотя бы один параметр: primaryTitle, genre або originalTitle" }));
                 break;
             }
 
             try {
+                // ✅ передаємо всі три параметри
                 const results = await search(primaryTitle, genre, originalTitle);
                 res.writeHead(200, { "content-type": "application/json" });
                 res.end(JSON.stringify(results));
@@ -54,6 +56,7 @@ const server = createServer(async (req, res) => {
                 res.end(JSON.stringify({ error: err.message }));
             }
             break;
+        }
 
         case "/availableGenres":
             try {
@@ -65,17 +68,17 @@ const server = createServer(async (req, res) => {
                 res.end(JSON.stringify({ error: err.message }));
             }
             break;
+
         case "/topFilms":
             try {
-                const genres = await getTopFilms();
+                const films = await getTopFilms();
                 res.writeHead(200, { "content-type": "application/json" });
-                res.end(JSON.stringify(genres));
+                res.end(JSON.stringify(films));
             } catch (err) {
                 res.writeHead(500, { "content-type": "application/json" });
                 res.end(JSON.stringify({ error: err.message }));
             }
             break;
-        
 
         default:
             res.writeHead(404);
@@ -83,14 +86,16 @@ const server = createServer(async (req, res) => {
     }
 });
 
-async function search(query = "", genre = "") {
+// ✅ виправлено: limit замість rows, додано originalTitle
+async function search(query = "", genre = "", originalTitle = "") {
     const params = new URLSearchParams({
         type: "movie",
-        rows: 10,
+        limit: 10,          // ✅ було rows: 10 — API його ігнорувало
         sortOrder: "DESC",
         sortField: "numVotes",
         ...(genre && { genre }),
         ...(query && { query }),
+        ...(originalTitle && { primaryTitle: originalTitle }), // ✅ тепер передається
     });
 
     const response = await fetch(
@@ -148,7 +153,6 @@ async function getTopFilms() {
     }
 
     return response.json();
-    
 }
 
 function resolvePathToFile(file) {

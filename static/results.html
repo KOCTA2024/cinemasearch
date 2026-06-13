@@ -12,16 +12,23 @@
 
     <script>
         let ul = document.querySelector("ul")
-        let title = new URLSearchParams(window.location.search).get("title");
+        let title = new URLSearchParams(window.location.search).get("primaryTitle");
     console.log(title);
     fetch("/api/search?primaryTitle=" + title).then(res=>res.json()).then(data=>{
         console.log(data)
-        data.titles.forEach(m=>{
-            document.querySelector("#main").innerHTML += `<div class="film_div"><h2>${m.primaryTitle}</h2>
-                <h4>${m.description}</h4>
-                <img src=${m.primaryImage}></img></div>
-            `
-        })
+data.titles.forEach(m => {
+    fetch(`https://api.imdbapi.dev/titles/${m.id}`)
+        .then(res => res.json())
+        .then(detail => {
+            document.querySelector("#main").innerHTML += `
+                <div class="film_div">
+                    <h2>${m.primaryTitle}</h2>
+                    <h4>${detail.plot ?? ''}</h4>
+                    <img src="${m.primaryImage?.url ?? ''}">
+                </div>
+            `;
+        });
+});
     })
     </script>
 </body>
