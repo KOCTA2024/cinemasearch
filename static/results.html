@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -15,8 +16,11 @@
     console.log(title);
     fetch("/api/search?primaryTitle=" + title).then(res=>res.json()).then(data=>{
         console.log(data)
-        data.results.forEach(m=>{
-            document.querySelector("#main").innerHTML += `<div class="film_div">${m.primaryTitle}</div>`
+        data.titles.forEach(m=>{
+            document.querySelector("#main").innerHTML += `<div class="film_div"><h2>${m.primaryTitle}</h2>
+                <h4>${m.description}</h4>
+                <img src=${m.primaryImage}></img></div>
+            `
         })
     })
     </script>

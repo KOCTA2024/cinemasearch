@@ -83,24 +83,22 @@ const server = createServer(async (req, res) => {
     }
 });
 
-async function search(primaryTitle = "", genre = "", originalTitle = "") {
+async function search(query = "", genre = "") {
     const params = new URLSearchParams({
         type: "movie",
         rows: 10,
         sortOrder: "DESC",
         sortField: "numVotes",
         ...(genre && { genre }),
-        ...(primaryTitle && { primaryTitle }),
-        ...(originalTitle && { originalTitle }),
+        ...(query && { query }),
     });
 
     const response = await fetch(
-        `https://imdb236.p.rapidapi.com/api/imdb/search?${params}`,
+        `https://api.imdbapi.dev/search/titles?${params}`,
         {
             method: "GET",
             headers: {
-                "x-rapidapi-host": "imdb236.p.rapidapi.com",
-                "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+                'accept': 'application/json'
             },
         }
     );
