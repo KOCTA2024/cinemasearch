@@ -29,7 +29,10 @@ const server = createServer(async (req, res) => {
             res.writeHead(200, { "content-type": "text/css" });
             res.end(resolvePathToFile("style.css"));
             break;
-
+        case "/search_style.css":
+            res.writeHead(200, { "content-type": "text/css" });
+            res.end(resolvePathToFile("search_style.css"));
+            break;
         case "/script.js":
             res.writeHead(200, { "content-type": "application/javascript" });
             res.end(resolvePathToFile("script.js"));
