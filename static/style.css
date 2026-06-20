@@ -130,7 +130,89 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+/* ── Search page (scoped to /search form, no conflicts) ── */
+form[action="/search"] {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+}
 
-.sbmt{
-    color:pink;
+
+form[action="/search"]::before {
+    content: "🎬 Film Search";
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2b616;
+    letter-spacing: 0.04em;
+}
+
+form inputp[type="number"] ::before{
+    content: "🎬 rating Search";
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2b616;
+    letter-spacing: 0.04em;
+}
+
+form[action="/search"] input[type="number"] {
+    width: 420px;
+    max-width: 90vw;
+    padding: 14px 20px;
+    background-color: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form[action="/search"] input[type="text"] {
+    width: 420px;
+    max-width: 90vw;
+    padding: 14px 20px;
+    background-color: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+form[action="/search"] input[type="text"]:focus {
+    border-color: #e2b616;
+    box-shadow: 0 0 0 3px rgba(226, 182, 22, 0.15);
+}
+
+form[action="/search"] input[type="text"]::placeholder {
+    color: #4a5568;
+}
+
+form[action="/search"] button[type="submit"] {
+    padding: 12px 36px;
+    background-color: #e2b616;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+form[action="/search"] button[type="submit"]:hover {
+    background-color: #f5cc42;
+    transform: translateY(-1px);
+}
+
+form[action="/search"] button[type="submit"]:active {
+    transform: translateY(0);
 }
