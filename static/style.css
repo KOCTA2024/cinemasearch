@@ -140,12 +140,35 @@ form[action="/search"] {
     gap: 24px;
 }
 
+
 form[action="/search"]::before {
     content: "🎬 Film Search";
     font-size: 2rem;
     font-weight: 700;
     color: #e2b616;
     letter-spacing: 0.04em;
+}
+
+form inputp[type="number"] ::before{
+    content: "🎬 rating Search";
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2b616;
+    letter-spacing: 0.04em;
+}
+
+form[action="/search"] input[type="number"] {
+    width: 420px;
+    max-width: 90vw;
+    padding: 14px 20px;
+    background-color: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 form[action="/search"] input[type="text"] {
@@ -161,6 +184,7 @@ form[action="/search"] input[type="text"] {
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 
 form[action="/search"] input[type="text"]:focus {
     border-color: #e2b616;

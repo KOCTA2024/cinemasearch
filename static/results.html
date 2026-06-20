@@ -1,65 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Film Search Results</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<!-- <header>
+    <h1>Hi</h1>
+</header> -->
+
 <body>
 
     <main id="main"></main>
 
     <script>
-        const title = new URLSearchParams(window.location.search).get("primaryTitle");
+        let ul = document.querySelector("ul")
+        let title = new URLSearchParams(window.location.search).get("primaryTitle");
+        let aggregateRating = new URLSearchParams(window.location.search).get("aggregateRating");
+        console.log(title);
+        if (title) {
 
-        fetch("/api/search?primaryTitle=" + encodeURIComponent(title))
-            .then(res => res.json())
-            .then(data => {
+            fetch("/api/search?primaryTitle=" + title).then(res => res.json()).then(data => {
+                console.log(data)
                 data.titles.forEach(m => {
                     fetch(`https://api.imdbapi.dev/titles/${m.id}`)
                         .then(res => res.json())
                         .then(detail => {
-                            const genres = (detail.genres ?? [])
-                                .map(g => `<span class="genre_tag">${g}</span>`)
-                                .join("");
-
-                            const rating = m.rating?.aggregateRating
-                                ? `<span class="film_rating">${m.rating.aggregateRating.toFixed(1)}</span>`
-                                : "";
-
-                            const releaseYear = detail.releaseDate?.year
-                                ?? m.startYear
-                                ?? "";
-
-                            const originalTitle = detail.originalTitle && detail.originalTitle !== detail.title
-                                ? `<p class="film_original_title">${detail.originalTitle}</p>`
-                                : "";
-
-                            const poster = m.primaryImage?.url
-                                ? `<img class="poster" src="${m.primaryImage.url}" alt="${detail.title ?? m.primaryTitle}">`
-                                : `<div class="poster" style="background:#0f3460;display:flex;align-items:center;justify-content:center;color:#4a5568;font-size:0.8rem;">No image</div>`;
-
                             document.querySelector("#main").innerHTML += `
-                                <div class="film_div">
-                                    ${poster}
-                                    <div class="film_info">
-                                        <a class="film_title" href="https://www.imdb.com/title/${m.id}/" target="_blank" rel="noopener">
-                                            ${detail.title ?? m.primaryTitle}
-                                        </a>
-                                        ${originalTitle}
-                                        <div class="film_meta">
-                                            ${rating}
-                                            <span class="film_release">${releaseYear}</span>
-                                        </div>
-                                        <div class="film_genres">${genres}</div>
-                                        <p class="film_description">${detail.plot ?? ""}</p>
-                                    </div>
-                                </div>
-                            `;
+                    <div class="film_div">
+                        <h2>${m.primaryTitle}</h2>
+                        <h4>${detail.plot ?? ''}</h4>
+                        <img src="${m.primaryImage?.url ?? ''} " weight=300 height=600>
+                        <h4>rating = ${m.rating.aggregateRating}</h4>
+                    </div>
+                `;
                         });
                 });
-            });
+            })
+        }
+        else if( aggregateRating){
+            fetch("/api/search?aggregateRating=" + aggregateRating).then(res => res.json()).then(data => {
+                console.log(data)
+                data.titles.forEach(m => {
+                    fetch(`https://api.imdbapi.dev/titles/${m.id}`)
+                        .then(res => res.json())
+                        .then(detail => {
+                            document.querySelector("#main").innerHTML += `
+                    <div class="film_div">
+                        <h2>${m.primaryTitle}</h2>
+                        <h4>${detail.plot ?? ''}</h4>
+                        <img src="${m.primaryImage?.url ?? ''} " weight=300 height=600>
+                        <h4>rating = ${m.rating.aggregateRating}</h4>
+                    </div>
+                `;
+                        });
+                });
+            })
+        }
     </script>
 </body>
+
 </html>
