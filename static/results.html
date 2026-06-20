@@ -6,6 +6,9 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<!-- <header>
+    <h1>Hi</h1>
+</header> -->
 <body>
 
     <main id="main"></main>
@@ -25,6 +28,7 @@ data.titles.forEach(m => {
                     <h2>${m.primaryTitle}</h2>
                     <h4>${detail.plot ?? ''}</h4>
                     <img src="${m.primaryImage?.url ?? ''} " weight=300 height=600>
+                    <h4>rating = ${m.rating.aggregateRating}</h4>
                 </div>
             `;
         });

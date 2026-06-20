@@ -130,3 +130,7 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+.sbmt{
+    color:pink;
+}
