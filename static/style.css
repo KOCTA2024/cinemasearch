@@ -1,16 +1,11 @@
-h1 {
-    color: aqua;
-}
-
-.film_div {
-    margin: 10px;
-    border: 3px solid black;
-    border-radius: 4px;
-}
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+html {
+    background-color: #1a1a2e;
 }
 
 body {
@@ -18,8 +13,278 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #e0e0e0;
     padding: 32px 16px;
+    min-height: 100vh;
 }
 
+/* ── Search page ── */
+.search-page {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 40px 0;
+}
+
+.search-logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2b616;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+/* Title search form */
+.title-form {
+    display: flex;
+    gap: 10px;
+}
+
+.title-form input[type="text"] {
+    flex: 1;
+    padding: 13px 18px;
+    background-color: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.title-form input[type="text"]:focus {
+    border-color: #e2b616;
+    box-shadow: 0 0 0 3px rgba(226, 182, 22, 0.15);
+}
+
+.title-form input[type="text"]::placeholder {
+    color: #4a5568;
+}
+
+.title-form button[type="submit"] {
+    padding: 13px 28px;
+    background-color: #e2b616;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.title-form button[type="submit"]:hover {
+    background-color: #f5cc42;
+    transform: translateY(-1px);
+}
+
+/* Filter blocks */
+.filter-block {
+    background-color: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+}
+
+.search-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 8px;
+}
+.filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #8899aa;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+/* Genre grid */
+.genre-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.genre-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    border-radius: 999px;
+    color: #8899aa;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+.genre-btn:hover {
+    border-color: #a0aec0;
+    color: #e0e0e0;
+}
+
+.genre-btn input[type="checkbox"] {
+    display: none;
+}
+
+.genre-btn:has(input:checked) {
+    background-color: rgba(226, 182, 22, 0.12);
+    border-color: #e2b616;
+    color: #e2b616;
+}
+
+.genre-icon {
+    font-size: 1em;
+    line-height: 1;
+}
+
+/* Rating slider */
+.rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.rating-header .filter-label {
+    margin-bottom: 0;
+}
+
+.rating-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #e2b616;
+}
+
+.slider-row {
+    position: relative;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.slider-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #0f3460;
+    border-radius: 2px;
+}
+
+.slider-fill {
+    position: absolute;
+    height: 4px;
+    background: #e2b616;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+input[type=range].dual-range {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+    height: 36px;
+    margin: 0;
+}
+
+input[type=range].dual-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e2b616;
+    border: 2px solid #16213e;
+    pointer-events: all;
+    cursor: grab;
+    transition: transform 0.1s;
+}
+
+input[type=range].dual-range::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.15);
+}
+
+input[type=range].dual-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e2b616;
+    border: 2px solid #16213e;
+    pointer-events: all;
+    cursor: grab;
+}
+
+.slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+}
+
+.slider-ticks span {
+    font-size: 0.75rem;
+    color: #4a5568;
+}
+
+/* Action buttons */
+.btn-primary {
+    padding: 12px 32px;
+    background-color: #e2b616;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+    background-color: #f5cc42;
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    padding: 12px 24px;
+    background: transparent;
+    color: #8899aa;
+    border: 1px solid #0f3460;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+    color: #e0e0e0;
+    border-color: #a0aec0;
+}
+
+/* ── Results page ── */
 #main {
     display: flex;
     flex-direction: column;
@@ -129,66 +394,4 @@ body {
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-/* ── Search page (scoped to /search form, no conflicts) ── */
-form[action="/search"] {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 24px;
-}
-
-form[action="/search"]::before {
-    content: "🎬 Film Search";
-    font-size: 2rem;
-    font-weight: 700;
-    color: #e2b616;
-    letter-spacing: 0.04em;
-}
-
-form[action="/search"] input[type="number"] {
-    width: 420px;
-    max-width: 90vw;
-    padding: 14px 20px;
-    background-color: #16213e;
-    border: 2px solid #0f3460;
-    border-radius: 10px;
-    color: #e0e0e0;
-    font-size: 1rem;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-form[action="/search"] input[type="text"]:focus {
-    border-color: #e2b616;
-    box-shadow: 0 0 0 3px rgba(226, 182, 22, 0.15);
-}
-
-form[action="/search"] input[type="text"]::placeholder {
-    color: #4a5568;
-}
-
-form[action="/search"] button[type="submit"] {
-    padding: 12px 36px;
-    background-color: #e2b616;
-    color: #1a1a2e;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-form[action="/search"] button[type="submit"]:hover {
-    background-color: #f5cc42;
-    transform: translateY(-1px);
-}
-
-form[action="/search"] button[type="submit"]:active {
-    transform: translateY(0);
 }

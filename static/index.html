@@ -4,23 +4,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="script.js" defer></script>
+    <title>Film Search</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <form action="/search" method="get">
-        <input id="name" name="primaryTitle" type="text" value="Iron man">
-        <button class="sbmt" type="submit">go</button>
-    </form>
-    
-    <form action="/api/titles" method="get">
-        <input id="rating" name="AggregateRating" type="number" value="0">
-        <input id="rating" name="AggregateRating" type="number" value="10">
-        <button class="sbmt" type="submit">go</button>
-    </form>
-    
+    <div class="search-page">
+        <h1 class="search-logo">🎬 Film Search</h1>
+
+        <!-- Title search -->
+        <form action="/search" method="get" class="title-form">
+            <input name="primaryTitle" type="text" placeholder="Search by title…">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Genre + Rating search -->
+        <form action="/search" method="get">
+
+            <section class="filter-block">
+                <p class="filter-label">Genre</p>
+                <div class="genre-grid">
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Action"><span class="genre-icon">⚡</span>Action</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Adventure"><span class="genre-icon">🗺️</span>Adventure</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Animation"><span class="genre-icon">✨</span>Animation</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Anime"><span class="genre-icon">⭐</span>Anime</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Comedy"><span class="genre-icon">😄</span>Comedy</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Crime"><span class="genre-icon">🔍</span>Crime</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Documentary"><span class="genre-icon">🎥</span>Documentary</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Drama"><span class="genre-icon">🎭</span>Drama</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Family"><span class="genre-icon">👨‍👩‍👧</span>Family</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Fantasy"><span class="genre-icon">🧙</span>Fantasy</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Franchise"><span class="genre-icon">🏛️</span>Franchise</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Game Show"><span class="genre-icon">🏆</span>Game Show</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Horror"><span class="genre-icon">👻</span>Horror</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Language"><span class="genre-icon">🌍</span>Language</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Lifestyle"><span class="genre-icon">💚</span>Lifestyle</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Music"><span class="genre-icon">🎵</span>Music</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Musical"><span class="genre-icon">🎤</span>Musical</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Mystery"><span class="genre-icon">🔮</span>Mystery</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Reality TV"><span class="genre-icon">📺</span>Reality TV</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Romance"><span class="genre-icon">💖</span>Romance</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Sci-Fi"><span class="genre-icon">🚀</span>Sci-Fi</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Seasonal"><span class="genre-icon">❄️</span>Seasonal</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Short"><span class="genre-icon">⏱️</span>Short</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Sport"><span class="genre-icon">⚽</span>Sport</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Thriller"><span class="genre-icon">🔥</span>Thriller</label>
+                    <label class="genre-btn"><input type="checkbox" name="genre" value="Western"><span class="genre-icon">🤠</span>Western</label>
+                </div>
+            </section>
+
+            <section class="filter-block">
+                <div class="rating-header">
+                    <p class="filter-label">Rating</p>
+                    <span class="rating-value">★ <span id="ratingLabel">1 – 10</span></span>
+                </div>
+                <div class="slider-row">
+                    <div class="slider-track"></div>
+                    <div class="slider-fill" id="sliderFill"></div>
+                    <input type="range" class="dual-range" id="rMin" name="minAggregateRating" min="1" max="10" value="1" step="1">
+                    <input type="range" class="dual-range" id="rMax" name="maxAggregateRating" min="1" max="10" value="10" step="1">
+                </div>
+                <div class="slider-ticks">
+                    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                    <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                </div>
+            </section>
+
+            <div class="search-actions">
+                <button type="submit" class="btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const rMin = document.getElementById('rMin');
+        const rMax = document.getElementById('rMax');
+        const fill = document.getElementById('sliderFill');
+        const rLabel = document.getElementById('ratingLabel');
+
+        function updateSlider() {
+            const lo = Math.min(+rMin.value, +rMax.value);
+            const hi = Math.max(+rMin.value, +rMax.value);
+            const pct = v => ((v - 1) / 9) * 100;
+            fill.style.left = pct(lo) + '%';
+            fill.style.right = (100 - pct(hi)) + '%';
+            rLabel.textContent = lo === hi ? lo : lo + ' – ' + hi;
+        }
+
+        rMin.addEventListener('input', updateSlider);
+        rMax.addEventListener('input', updateSlider);
+        updateSlider();
+    </script>
 </body>
 
 </html>

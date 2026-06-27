@@ -16,48 +16,64 @@
     <main id="main"></main>
 
     <script>
-        let ul = document.querySelector("ul")
-        let title = new URLSearchParams(window.location.search).get("primaryTitle");
-        let aggregateRating = new URLSearchParams(window.location.search).get("aggregateRating");
-        console.log(title);
-        if (title) {
+        const params = new URLSearchParams(window.location.search);
+        const title = params.get("primaryTitle");
+        const genres = params.getAll("genre");   // checkbox-ы шлют несколько genres=...
+        const minRating = params.get("minAggregateRating") ?? "";
+        const maxRating = params.get("maxAggregateRating") ?? "";
 
-            fetch("/api/search?primaryTitle=" + title).then(res => res.json()).then(data => {
-                console.log(data)
-                data.titles.forEach(m => {
-                    fetch(`https://api.imdbapi.dev/titles/${m.id}`)
-                        .then(res => res.json())
-                        .then(detail => {
-                            document.querySelector("#main").innerHTML += `
-                    <div class="film_div">
-                        <h2>${m.primaryTitle}</h2>
-                        <h4>${detail.plot ?? ''}</h4>
-                        <img src="${m.primaryImage?.url ?? ''} " weight=300 height=600>
-                        <h4>rating = ${m.rating.aggregateRating}</h4>
+        function renderMovie(m, detail) {
+            const genresHtml = (detail.genres ?? [])
+                .map(g => `<span class="genre_tag">${g}</span>`)
+                .join('');
+            document.querySelector("#main").innerHTML += `
+                <div class="film_div">
+                    <img class="poster" src="${m.primaryImage?.url ?? ''}" alt="${m.primaryTitle}">
+                    <div class="film_info">
+                        <span class="film_title">${m.primaryTitle}</span>
+                        <div class="film_meta">
+                            <span class="film_rating">${m.rating?.aggregateRating ?? '—'}</span>
+                            <span class="film_release">${m.startYear ?? ''}</span>
+                        </div>
+                        <div class="film_genres">${genresHtml}</div>
+                        <p class="film_description">${detail.plot ?? ''}</p>
                     </div>
-                `;
-                        });
-                });
-            })
+                </div>
+            `;
         }
-        else if( aggregateRating){
-            fetch("/api/titles?aggregateRating=" + aggregateRating).then(res => res.json()).then(data => {
-                console.log(data)
-                data.titles.forEach(m => {
-                    fetch(`https://api.imdbapi.dev/titles/${m.id}`)
-                        .then(res => res.json())
-                        .then(detail => {
-                            document.querySelector("#main").innerHTML += `
-                    <div class="film_div">
-                        <h2>${m.primaryTitle}</h2>
-                        <h4>${detail.plot ?? ''}</h4>
-                        <img src="${m.primaryImage?.url ?? ''} " weight=300 height=600>
-                        <h4>rating = ${m.rating.aggregateRating}</h4>
-                    </div>
-                `;
-                        });
-                });
-            })
+
+        function fetchDetails(titles) {
+            titles.forEach(m => {
+                fetch(`https://api.imdbapi.dev/titles/${m.id}`)
+                    .then(res => res.json())
+                    .then(detail => renderMovie(m, detail))
+                    .catch(err => console.error(`Failed to load details for ${m.id}:`, err));
+            });
+        }
+
+        if (title) {
+            fetch("/api/search?primaryTitle=" + encodeURIComponent(title))
+                .then(res => res.json())
+                .then(data => {
+                    data.titles.sort((a, b) => (b.rating?.voteCount ?? 0) - (a.rating?.voteCount ?? 0));
+                    fetchDetails(data.titles);
+                })
+                .catch(err => console.error("Search error:", err));
+
+        } else if (genres.length || minRating || maxRating) {
+            // Собираем параметры — genres может быть несколько
+            const apiParams = new URLSearchParams();
+            genres.forEach(g => apiParams.append("genre", g));
+            if (minRating) apiParams.set("minAggregateRating", minRating);
+            if (maxRating) apiParams.set("maxAggregateRating", maxRating);
+
+            fetch("/api/titles?" + apiParams.toString())
+                .then(res => res.json())
+                .then(data => {
+                    data.titles.sort((a, b) => (b.rating?.aggregateRating ?? 0) - (a.rating?.aggregateRating ?? 0));
+                    fetchDetails(data.titles);
+                })
+                .catch(err => console.error("Titles error:", err));
         }
     </script>
 </body>

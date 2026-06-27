@@ -62,18 +62,20 @@ const server = createServer(async (req, res) => {
             break;
         }
         case "/api/titles": {
-            const genre = url.searchParams.get("genre") ?? "";
-            const minAggregateRating = url.searchParams.get("minAggregateRating") ?? 0;
-            const maxAggregateRating = url.searchParams.get("MaxAggregateRating") ?? 10;
-            try{
-                const results = await titles(genre, minAggregateRating, maxAggregateRating)
-                res.writeHead(200, { "content-type": "application/json" });
-                res.end(JSON.stringify(results));
+        const genres = url.searchParams.getAll("genre"); // поддержка нескольких жанров
+        const minAggregateRating = Number(url.searchParams.get("minAggregateRating") ?? 0);
+        const maxAggregateRating = Number(url.searchParams.get("maxAggregateRating") ?? 10);
 
-            }catch(err){
-                res.writeHead(500, { "content-type": "application/json" });
-                res.end(JSON.stringify({ error: err.message }));
-            }
+        try {
+            const results = await titles(genres, minAggregateRating, maxAggregateRating);
+            res.writeHead(200, { "content-type": "application/json" });
+            res.end(JSON.stringify(results));
+        } catch (err) {
+            console.error(err); // ← добавь это, чтобы видеть реальную ошибку
+            res.writeHead(500, { "content-type": "application/json" });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        break;
         }
 
         default:
@@ -114,20 +116,28 @@ async function search(query = "", genre = "", originalTitle = "", aggregateRatin
     return response.json();
 }
 
-async function titles(genre = "", minAggregateRating = 0, maxAggregateRating = 10){
-    const response = await fetch(`https://api.imdbapi.dev/titles?genres=${genre}`,
-                {
-            method: "GET",
-            headers: {
-                'accept': 'application/json'
-            },
-            }
-        )
-    if(!response.ok){
-        throw new Error(`API error: ${response.status}`)
+async function titles(genres = [], minAggregateRating = 0, maxAggregateRating = 10) {
+  const params = new URLSearchParams();
+
+  genres.forEach(g => params.append("genres", g)); // API imdbapi.dev принимает genres[]
+  if (minAggregateRating > 0) params.append("minAggregateRating", minAggregateRating);
+  if (maxAggregateRating < 10) params.append("maxAggregateRating", maxAggregateRating);
+
+  const response = await fetch(`https://api.imdbapi.dev/titles?${params}`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+  });
+
+    if (!response.ok) {
+        const body = await response.text();
+        console.error("URL:", response.url);
+        console.error("Body:", body);
+        throw new Error(`API error: ${response.status}`);
     }
-    return response.json()
-}
+    return response.json();
+    }
 
 function resolvePathToFile(file) {
     return fs.readFileSync(path.join(__dirname, "static", file));
